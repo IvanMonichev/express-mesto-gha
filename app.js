@@ -8,7 +8,7 @@ app.listen(PORT, () => {
   console.log(`Сервер успешно запущен! Порт – ${PORT}.`);
 })
 
-mongoose.conntect('mongodb://localhost:27017/mestodb', {
+mongoose.connect('mongodb://localhost:27017/mestodb', {
   useUnifiedTopology: true,
   useNewUrlParser: true,
   autoIndex: true,
