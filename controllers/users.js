@@ -12,7 +12,7 @@ const getUser = (req, res) => {
   User.findById(userId)
     .then(user => {
       if (!user) {
-        res.status(404).send({ "message": "Такого пользователя не существует!" })
+        res.status(404).send({ message: "Такого пользователя не существует!" })
         return;
       }
       res.status(200).send(user);
@@ -20,7 +20,7 @@ const getUser = (req, res) => {
     .catch(err => res.status(500).send({ message: err.message }));
 }
 
-const postUser = (req, res) => {
+const createUser = (req, res) => {
 
   const { name, about, avatar } = req.body;
 
@@ -39,5 +39,5 @@ const postUser = (req, res) => {
 module.exports = {
   getUsers,
   getUser,
-  postUser
+  createUser
 }

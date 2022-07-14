@@ -9,7 +9,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(router);
+
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
@@ -17,6 +17,16 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useUnifiedTopology: true,
   useFindAndModify: false,
 });
+
+app.use((req, res, next) => {
+  req.user = {
+    _id: '62cdf2dd54786145bdd582b1'
+  };
+
+  next();
+});
+
+app.use(router);
 
 app.listen(PORT, () => {
   console.log(`Сервер успешно запущен! Порт – ${PORT}.`);
