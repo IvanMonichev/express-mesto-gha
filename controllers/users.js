@@ -43,8 +43,9 @@ const updateUser = (req, res) => {
     .then((user) => {
       res.status(200).send({
         _id: owner,
-        name: user.name,
-        about: user.about,
+        name,
+        about,
+        avatar: user.avatar,
       });
     })
     .catch((err) => {
@@ -56,15 +57,33 @@ const updateUser = (req, res) => {
     });
 };
 
-/*
-const updateAvatar = (req, res) => {
 
-}
-*/
+const updateAvatar = (req, res) => {
+  const owner = req.user._id;
+  const { avatar } = req.body;
+
+  User.findByIdAndUpdate(owner, { avatar })
+    .then((user) => {
+      res.status(200).send({
+        _id: owner,
+        user: user.name,
+        about: user.about,
+        avatar,
+      });
+    })
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(422).send({ message: err.name });
+        return;
+      }
+      res.status(500).send({ message: err.message });
+    });
+};
 
 module.exports = {
   getUsers,
   getUser,
   createUser,
   updateUser,
+  updateAvatar,
 };
