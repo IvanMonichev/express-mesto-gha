@@ -57,7 +57,6 @@ const updateUser = (req, res) => {
     });
 };
 
-
 const updateAvatar = (req, res) => {
   const owner = req.user._id;
   const { avatar } = req.body;
