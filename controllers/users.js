@@ -36,8 +36,34 @@ const createUser = (req, res) => {
     })
 }
 
+const updateUser = (req, res) => {
+
+  const id = req.user._id;
+  const { name, about } = req.body;
+  User.findByIdAndUpdate(id, { name, about })
+    .then(({ name, about }) => {
+      res.status(200).send({
+        _id: id,
+        name: name,
+        about: about
+      })
+    })
+    .catch(err => {
+      if (err.name === 'ValidationError') {
+        res.status(422).send({ message: err.name });
+        return;
+      }
+      res.status(500).send({ message: err.message })
+    })
+}
+
+const updateAvatar = (req, res) => {
+
+}
+
 module.exports = {
   getUsers,
   getUser,
-  createUser
+  createUser,
+  updateUser
 }
