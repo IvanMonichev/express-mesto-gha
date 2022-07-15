@@ -16,12 +16,12 @@ const userScheme = new mongoose.Schema(
     },
     avatar: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
   {
-    versionKey: false
-  }
-)
+    versionKey: false,
+  },
+);
 
 module.exports = mongoose.model('user', userScheme);
