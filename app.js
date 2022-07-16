@@ -28,10 +28,6 @@ app.use((req, res, next) => {
 
 app.use(router);
 
-app.use((req, res) => {
-  res.status(404).send({ message: 'Путь не найден' });
-});
-
 app.listen(PORT, '127.0.0.1', () => {
   console.log(`Сервер успешно запущен! Порт – ${PORT}.`);
 });
