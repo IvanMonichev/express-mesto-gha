@@ -12,6 +12,10 @@ const createCard = (req, res) => {
   Card.create({ name, link, owner })
     .then((card) => res.status(201).send(card))
     .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(400).send({ message: "Переданы некорректные данные при создании карточки" });
+        return;
+      }
       res.status(500).send({ message: err.message });
     });
 };
@@ -21,13 +25,15 @@ const deleteCard = (req, res) => {
 
   Card.findByIdAndRemove(cardId)
     .then((card) => {
-      if (!card) {
-        res.status(404).send({ message: 'Такой карточки не существует!' });
+      res.status(200).send({message: `Карточка с ID ${card.id} удалена`});
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(404).send({message: 'Карточка с указанным ID не найдена.'});
         return;
       }
-      res.status(200).send(card);
-    })
-    .catch((err) => res.status(500).send({ message: err.message }));
+      res.status(500).send({message: err.message})
+    });
 };
 
 const likeCard = (req, res) => {
@@ -35,13 +41,15 @@ const likeCard = (req, res) => {
 
   Card.findOneAndUpdate(req.params.cardId, {$addToSet: {likes: owner}}, { new: true })
     .then((card) => {
-      if(!card) {
-        res.status(404).send({ message: 'Такой карточки не существует' });
-        return;
-      }
       res.status(200).send(card);
     })
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(404).send({message: 'Передан несуществующий ID карточки.'});
+        return;
+      }
+      res.status(500).send({message: err.message})
+    });
 
 }
 

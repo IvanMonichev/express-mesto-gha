@@ -3,7 +3,9 @@ const User = require('../models/user');
 const getUsers = (req, res) => {
   User.find({})
     .then((users) => res.status(200).send(users))
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch((err) => {
+      res.status(500).send({message: err.message})
+    });
 };
 
 const getUser = (req, res) => {
@@ -11,13 +13,15 @@ const getUser = (req, res) => {
 
   User.findById(userId)
     .then((user) => {
-      if (!user) {
-        res.status(404).send({ message: 'Такого пользователя не существует!' });
-        return;
-      }
       res.status(200).send(user);
     })
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch((err) => {
+      if(err.name === 'CastError') {
+        res.status(404).send({ message: 'Пользователь по указанному ID не найден' });
+        return;
+      }
+      res.status(500).send({message: err})
+    });
 };
 
 const createUser = (req, res) => {
@@ -27,7 +31,7 @@ const createUser = (req, res) => {
     .then((user) => res.status(201).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(422).send({ message: err.name });
+        res.status(400).send({ message: "Переданы неккоректные данные при создании пользователя" });
         return;
       }
 
@@ -50,7 +54,11 @@ const updateUser = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(422).send({ message: err.name });
+        res.status(400).send({ message: "Переданы некорректные данные при обновлении профиля" });
+        return;
+      }
+      else if (err.name === 'CastError') {
+        res.status(404).send({ message: "Пользователь с указанным ID не найден" })
         return;
       }
       res.status(500).send({ message: err.message });
@@ -72,7 +80,11 @@ const updateAvatar = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(422).send({ message: err.name });
+        res.status(400).send({ message: "Переданы некорректные данные при обновлении профиля" });
+        return;
+      }
+      else if (err.name === 'CastError') {
+        res.status(404).send({ message: "Пользователь с указанным ID не найден" })
         return;
       }
       res.status(500).send({ message: err.message });
