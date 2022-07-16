@@ -25,11 +25,17 @@ const deleteCard = (req, res) => {
 
   Card.findByIdAndRemove(cardId)
     .then((card) => {
-      res.status(200).send({ message: `Карточка с ID ${card.id} удалена` });
+      if (!card) {
+        res.status(404).send({
+          message: 'Переданы некорректные данные для удаления карточки',
+        });
+      } else {
+        res.status(200).send({ message: `Карточка с ID ${card.id} удалена` });
+      }
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(404).send({ message: 'Карточка с указанным ID не найдена.' });
+        res.status(404).send({ message: 'Карточка с указанным ID не найдена' });
         return;
       }
       res.status(500).send({ message: err.message });
@@ -47,7 +53,7 @@ const likeCard = (req, res) => {
   )
     .then((card) => {
       if (!card) {
-        res.status(400).send({
+        res.status(404).send({
           message: 'Переданы некорректные данные для постановки лайк',
         });
       } else {
@@ -56,7 +62,7 @@ const likeCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(404).send({ message: 'Передан несуществующий ID карточки' });
+        res.status(400).send({ message: 'Передан несуществующий ID карточки' });
       } else if (err.name === 'ValidationError') {
         res.status(400).send({ message: 'Переданы некорректные данные для постановки лайка' });
       } else {
@@ -75,7 +81,7 @@ const dislikeCard = (req, res) => {
   )
     .then((card) => {
       if (!card) {
-        res.status(400).send({
+        res.status(404).send({
           message: 'Переданы некорректные данные для постановки лайк',
         });
       } else {
@@ -84,7 +90,7 @@ const dislikeCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(404).send({ message: 'Передан несуществующий ID карточки' });
+        res.status(400).send({ message: 'Передан несуществующий ID карточки' });
       } else if (err.name === 'ValidationError') {
         res.status(400).send({ message: 'Переданы некорректные данные для снятия лайка' });
       } else {
