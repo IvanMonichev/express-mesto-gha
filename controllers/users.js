@@ -13,7 +13,13 @@ const getUser = (req, res) => {
 
   User.findById(userId)
     .then((user) => {
-      res.status(200).send(user);
+      if (!user) {
+        res.status(404).send({
+          message: 'Такого пользователя не существует',
+        });
+      } else {
+        res.status(200).send(user);
+      }
     })
     .catch((err) => {
       if (err.name === 'CastError') {
