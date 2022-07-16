@@ -38,14 +38,21 @@ const deleteCard = (req, res) => {
 
 const likeCard = (req, res) => {
   const owner = req.user._id;
+  const { cardId } = req.params;
 
-  Card.findOneAndUpdate(
-    req.params.cardId,
+  Card.findByIdAndUpdate(
+    cardId,
     { $addToSet: { likes: owner } },
     { new: true, runValidators: true },
   )
     .then((card) => {
-      res.status(200).send(card);
+      if (!card) {
+        res.status(400).send({
+          message: 'Переданы некорректные данные для постановки лайк',
+        });
+      } else {
+        res.status(200).send(card);
+      }
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -60,18 +67,20 @@ const likeCard = (req, res) => {
 
 const dislikeCard = (req, res) => {
   const owner = req.user._id;
-
-  Card.findOneAndUpdate(
-    req.params.cardId,
+  const { cardId } = req.params;
+  Card.findByIdAndUpdate(
+    cardId,
     { $pull: { likes: owner } },
     { new: true, runValidators: true },
   )
     .then((card) => {
       if (!card) {
-        res.status(404).send({ message: 'Такой карточки не существует' });
-        return;
+        res.status(400).send({
+          message: 'Переданы некорректные данные для постановки лайк',
+        });
+      } else {
+        res.status(200).send(card);
       }
-      res.status(200).send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
