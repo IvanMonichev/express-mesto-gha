@@ -2,7 +2,7 @@
   "name": "mesto-backend",
   "version": "1.0.0",
   "description": "Прект для закрепления навыков работы с инструментами бенекд-направления.",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "lint": "npx eslint .",
     "start": "node app.js",
