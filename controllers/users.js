@@ -4,7 +4,7 @@ const getUsers = (req, res) => {
   User.find({})
     .then((users) => res.status(200).send(users))
     .catch((err) => {
-      res.status(500).send({message: err.message})
+      res.status(500).send({ message: err.message });
     });
 };
 
@@ -16,11 +16,11 @@ const getUser = (req, res) => {
       res.status(200).send(user);
     })
     .catch((err) => {
-      if(err.name === 'CastError') {
+      if (err.name === 'CastError') {
         res.status(404).send({ message: 'Пользователь по указанному ID не найден' });
         return;
       }
-      res.status(500).send({message: err})
+      res.status(500).send({ message: err });
     });
 };
 
@@ -31,7 +31,7 @@ const createUser = (req, res) => {
     .then((user) => res.status(201).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: "Переданы неккоректные данные при создании пользователя" });
+        res.status(400).send({ message: 'Переданы неккоректные данные при создании пользователя' });
         return;
       }
 
@@ -54,14 +54,12 @@ const updateUser = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: "Переданы некорректные данные при обновлении профиля" });
-        return;
+        res.status(400).send({ message: 'Переданы некорректные данные при обновлении профиля' });
+      } else if (err.name === 'CastError') {
+        res.status(404).send({ message: 'Пользователь с указанным ID не найден' });
+      } else {
+        res.status(500).send({ message: err.message });
       }
-      else if (err.name === 'CastError') {
-        res.status(404).send({ message: "Пользователь с указанным ID не найден" })
-        return;
-      }
-      res.status(500).send({ message: err.message });
     });
 };
 
@@ -80,14 +78,12 @@ const updateAvatar = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: "Переданы некорректные данные при обновлении профиля" });
-        return;
+        res.status(400).send({ message: 'Переданы некорректные данные при обновлении профиля' });
+      } else if (err.name === 'CastError') {
+        res.status(404).send({ message: 'Пользователь с указанным ID не найден' });
+      } else {
+        res.status(500).send({ message: err.message });
       }
-      else if (err.name === 'CastError') {
-        res.status(404).send({ message: "Пользователь с указанным ID не найден" })
-        return;
-      }
-      res.status(500).send({ message: err.message });
     });
 };
 
