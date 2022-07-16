@@ -23,7 +23,7 @@ const getUser = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(404).send({ message: 'Пользователь по указанному ID не найден' });
+        res.status(400).send({ message: 'Пользователь по указанному ID не найден' });
         return;
       }
       res.status(500).send({ message: err });
@@ -49,7 +49,7 @@ const updateUser = (req, res) => {
   const owner = req.user._id;
   const { name, about } = req.body;
 
-  User.findByIdAndUpdate(owner, { name, about })
+  User.findByIdAndUpdate(owner, { name, about }, { runValidators: true })
     .then((user) => {
       res.status(200).send({
         _id: owner,
@@ -73,7 +73,7 @@ const updateAvatar = (req, res) => {
   const owner = req.user._id;
   const { avatar } = req.body;
 
-  User.findByIdAndUpdate(owner, { avatar })
+  User.findByIdAndUpdate(owner, { avatar }, {runValidators: true})
     .then((user) => {
       res.status(200).send({
         _id: owner,
