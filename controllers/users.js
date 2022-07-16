@@ -73,7 +73,7 @@ const updateAvatar = (req, res) => {
   const owner = req.user._id;
   const { avatar } = req.body;
 
-  User.findByIdAndUpdate(owner, { avatar }, {runValidators: true})
+  User.findByIdAndUpdate(owner, { avatar }, { runValidators: true })
     .then((user) => {
       res.status(200).send({
         _id: owner,

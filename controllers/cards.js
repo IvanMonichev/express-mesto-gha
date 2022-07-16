@@ -39,7 +39,11 @@ const deleteCard = (req, res) => {
 const likeCard = (req, res) => {
   const owner = req.user._id;
 
-  Card.findOneAndUpdate(req.params.cardId, { $addToSet: { likes: owner } }, { new: true, runValidators: true })
+  Card.findOneAndUpdate(
+    req.params.cardId,
+    { $addToSet: { likes: owner } },
+    { new: true, runValidators: true },
+  )
     .then((card) => {
       res.status(200).send(card);
     })
@@ -57,7 +61,11 @@ const likeCard = (req, res) => {
 const dislikeCard = (req, res) => {
   const owner = req.user._id;
 
-  Card.findOneAndUpdate(req.params.cardId, { $pull: { likes: owner } }, { new: true, runValidators: true, })
+  Card.findOneAndUpdate(
+    req.params.cardId,
+    { $pull: { likes: owner } },
+    { new: true, runValidators: true },
+  )
     .then((card) => {
       if (!card) {
         res.status(404).send({ message: 'Такой карточки не существует' });
