@@ -2,7 +2,7 @@ const Card = require('../models/card');
 
 const getCard = (req, res) => {
   Card.find({})
-    .then((cards) => res.status(200).send(cards))
+    .then((cards) => res.send(cards))
     .catch((err) => res.status(500).send({ message: err.message }));
 };
 
@@ -30,7 +30,7 @@ const deleteCard = (req, res) => {
           message: 'Переданы некорректные данные для удаления карточки',
         });
       } else {
-        res.status(200).send({ message: `Карточка с ID ${card.id} удалена` });
+        res.send({ message: `Карточка с ID ${card.id} удалена` });
       }
     })
     .catch((err) => {
@@ -57,7 +57,7 @@ const likeCard = (req, res) => {
           message: 'Переданы некорректные данные для постановки лайк',
         });
       } else {
-        res.status(200).send(card);
+        res.send(card);
       }
     })
     .catch((err) => {
@@ -85,7 +85,7 @@ const dislikeCard = (req, res) => {
           message: 'Переданы некорректные данные для постановки лайк',
         });
       } else {
-        res.status(200).send(card);
+        res.send(card);
       }
     })
     .catch((err) => {

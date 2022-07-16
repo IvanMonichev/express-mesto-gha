@@ -2,7 +2,7 @@ const User = require('../models/user');
 
 const getUsers = (req, res) => {
   User.find({})
-    .then((users) => res.status(200).send(users))
+    .then((users) => res.send(users))
     .catch((err) => {
       res.status(500).send({ message: err.message });
     });
@@ -18,7 +18,7 @@ const getUser = (req, res) => {
           message: 'Такого пользователя не существует',
         });
       } else {
-        res.status(200).send(user);
+        res.send(user);
       }
     })
     .catch((err) => {
@@ -51,7 +51,7 @@ const updateUser = (req, res) => {
 
   User.findByIdAndUpdate(owner, { name, about }, { runValidators: true })
     .then((user) => {
-      res.status(200).send({
+      res.send({
         _id: owner,
         name,
         about,
@@ -75,7 +75,7 @@ const updateAvatar = (req, res) => {
 
   User.findByIdAndUpdate(owner, { avatar }, { runValidators: true })
     .then((user) => {
-      res.status(200).send({
+      res.send({
         _id: owner,
         user: user.name,
         about: user.about,
