@@ -14,7 +14,7 @@ const createCard = (req, res) => {
     .then((card) => res.status(201).send(card))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(ERROR_CODE).send({ message: err.errors[Object.keys(err.errors)].message });
+        res.status(ERROR_CODE).send({ message: err.message });
         return;
       }
       res.status(DEFAULT_ERROR).send({ message: 'Ошибка сервера' });
@@ -65,7 +65,7 @@ const likeCard = (req, res) => {
       if (err.name === 'CastError') {
         res.status(ERROR_CODE).send({ message: 'Передан несуществующий ID карточки' });
       } else if (err.name === 'ValidationError') {
-        res.status(ERROR_CODE).send({ message: err.errors[Object.keys(err.errors)].message });
+        res.status(ERROR_CODE).send({ message: err.message });
       } else {
         res.status(DEFAULT_ERROR).send({ message: 'Ошибка сервера' });
       }
@@ -93,7 +93,7 @@ const dislikeCard = (req, res) => {
       if (err.name === 'CastError') {
         res.status(ERROR_CODE).send({ message: 'Передан несуществующий ID карточки' });
       } else if (err.name === 'ValidationError') {
-        res.status(ERROR_CODE).send({ message: err.errors[Object.keys(err.errors)].message });
+        res.status(ERROR_CODE).send({ message: err.message });
       } else {
         res.status(DEFAULT_ERROR).send({ message: 'Ошибка сервера' });
       }

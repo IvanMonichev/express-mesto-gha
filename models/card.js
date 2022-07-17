@@ -4,8 +4,8 @@ const cardScheme = new mongoose.Schema(
   {
     name: {
       type: String,
-      minlength: [2, 'Свойство {PATH} содержит меньше 2-ух символов'],
-      maxlength: [30, 'Свойство {PATH} содержит больше 30 символов'],
+      minlength: [2, 'содержит меньше 2-ух символов'],
+      maxlength: [30, 'содержит больше 30 символов'],
       required: true,
     },
     link: {

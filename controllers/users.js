@@ -60,7 +60,7 @@ const updateUser = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(ERROR_CODE).send({ message: err.errors[Object.keys(err.errors)].message });
+        res.status(ERROR_CODE).send({ message: err.message });
       } else if (err.name === 'CastError') {
         res.status(NOT_FOUND).send({ message: 'Пользователь с указанным ID не найден' });
       } else {
