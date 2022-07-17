@@ -1,7 +1,7 @@
 const Card = require('../models/card');
 const { DEFAULT_ERROR, NOT_FOUND, ERROR_CODE } = require('../errors/statusCode');
 
-const getCard = (req, res) => {
+const getCards = (req, res) => {
   Card.find({})
     .then((cards) => res.send(cards))
     .catch(() => res.status(DEFAULT_ERROR).send({ message: 'Ошибка сервера' }));
@@ -102,7 +102,7 @@ const dislikeCard = (req, res) => {
 
 module.exports = {
   createCard,
-  getCard,
+  getCards,
   deleteCard,
   likeCard,
   dislikeCard,
