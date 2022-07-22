@@ -32,13 +32,13 @@ const getUser = (req, res) => {
 };
 
 const createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
+  const { name, about, avatar, email, password } = req.body;
 
-  User.create({ name, about, avatar })
+  User.create({ name, about, avatar, email, password })
     .then((user) => res.status(201).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(ERROR_CODE).send({ message: 'Переданы неккоректные данные при создании пользователя' });
+        res.status(ERROR_CODE).send({ message: 'Переданы некорректные данные при создании пользователя' });
         return;
       }
       res.status(DEFAULT_ERROR).send({ message: 'Ошибка сервера' });
