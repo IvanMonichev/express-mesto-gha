@@ -1,18 +1,28 @@
-const { isAuthorised } = require('../utils/jwt');
+const jwt = require('jsonwebtoken');
+const { JWT_SECRET } = require('../utils/jwt');
 
 const checkAuthorization = (req, res, next) => {
 
   const { authorization } = req.headers;
 
   if (!authorization || !authorization.startsWith('Bearer ')) {
-    return res.send(401).send({ 'message': 'Необходима авторизация' })
+    return res.status(401).send({ 'message': 'Необходима авторизация' })
   }
 
   const token = authorization.replace('Bearer ', '');
 
-  if(!isAuthorised(token)) {
-    return res.status(401).send({ 'message': 'Недостаточно прав' })
-  };
+  let payload;
+  try {
+    payload = jwt.verify(token, JWT_SECRET);
+  } catch(err) {
+    return res.status(401).send({ 'message': 'Необходима авторизация' })
+  }
+
+  req.user = payload;
 
   next();
+}
+
+module.exports = {
+  checkAuthorization,
 }
