@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const { getJwtToken } = require('../middlewares/auth');
 const {ERROR_CODE, DEFAULT_ERROR, NOT_FOUND} = require('../errors/statusCode');
 
 const getUsers = (req, res) => {
@@ -117,7 +117,7 @@ const loginUser = (req, res) => {
         }
 
         // Создаём JWT-токен со сроком на одну неделю.
-        const token = jwt.sign({ _id: user._id }, 'temporary-secret-key', { expresIn: '7d'});
+        const token = getJwtToken(user._id);
         res.cookie('jwt', token, {
           maxAge: 1000 * 60 * 60 * 24 * 7, /* [миллисекунды * секунды * минуты * часы * дни = 7 дней ] */
           httpOnly: true,
