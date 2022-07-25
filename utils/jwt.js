@@ -1,4 +1,6 @@
 const jwt = require('jsonwebtoken');
+const User = require('../models/user');
+
 
 const JWT_SECRET = 'temporary-secret-key';
 
@@ -7,17 +9,11 @@ const getJwtToken = (id) => {
 }
 
 const isAuthorised = (token) => {
+  let payload;
 
-  jwt.verify(token, JWT_SECRET, (err, decoded) => {
-    if (err) {
-      return false;
-    }
-
-    User.findById(decoded.id);
-  })
 }
 
 module.exports = {
   getJwtToken,
-  isAuthorised
+  isAuthorised,
 }
