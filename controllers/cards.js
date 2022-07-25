@@ -9,7 +9,7 @@ const getCards = (req, res) => {
 
 const createCard = (req, res) => {
   const { name, link } = req.body;
-  const owner = req.user._id;
+  const owner = req.user.id;
   Card.create({ name, link, owner })
     .then((card) => res.status(201).send(card))
     .catch((err) => {
@@ -22,6 +22,7 @@ const createCard = (req, res) => {
 };
 
 const deleteCard = (req, res) => {
+  const owner = req.user.id;
   const { cardId } = req.params;
 
   Card.findByIdAndRemove(cardId)
@@ -30,7 +31,10 @@ const deleteCard = (req, res) => {
         res.status(NOT_FOUND).send({
           message: 'Переданы некорректные данные для удаления карточки',
         });
-      } else {
+      } else if (owner !== card.owner) {
+        res.status(403).send({ message: `Пользователь с ID ${owner} не является владельцем данной карточки`});
+      }
+      else {
         res.send({ message: `Карточка с ID ${card.id} удалена` });
       }
     })
@@ -44,7 +48,7 @@ const deleteCard = (req, res) => {
 };
 
 const likeCard = (req, res) => {
-  const owner = req.user._id;
+  const owner = req.user.id;
   const { cardId } = req.params;
 
   Card.findByIdAndUpdate(
@@ -73,7 +77,7 @@ const likeCard = (req, res) => {
 };
 
 const dislikeCard = (req, res) => {
-  const owner = req.user._id;
+  const owner = req.user.id;
   const { cardId } = req.params;
   Card.findByIdAndUpdate(
     cardId,
