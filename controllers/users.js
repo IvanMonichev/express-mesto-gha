@@ -121,7 +121,7 @@ const loginUser = (req, res) => {
         res.cookie('jwt', token, {
           maxAge: 1000 * 60 * 60 * 24 * 7, /* [миллисекунды * секунды * минуты * часы * дни = 7 дней ] */
           httpOnly: true,
-        })
+        });
         return res.status(200).send({ 'message': 'Аутентификация выполнена', 'token': token });
       })
     })
