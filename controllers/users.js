@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const {ERROR_CODE, DEFAULT_ERROR, NOT_FOUND} = require('../errors/statusCode');
 
@@ -30,23 +31,6 @@ const getUser = (req, res) => {
       }
       res.status(DEFAULT_ERROR).send({message: 'Ошибка сервера'});
     });
-};
-
-const createUser = (req, res) => {
-  const {name, about, avatar, email, password} = req.body;
-  bcrypt.hash(password, 10)
-    .then((hash) => {
-      User.create({name, about, avatar, email, password: hash})
-        .then((user) => res.status(201).send(user))
-        .catch((err) => {
-          if (err.name === 'ValidationError') {
-            res.status(ERROR_CODE).send({message: 'Переданы некорректные данные при создании пользователя'});
-            return;
-          }
-          res.status(DEFAULT_ERROR).send({message: 'Ошибка сервера'});
-        });
-    })
-
 };
 
 const updateUser = (req, res) => {
@@ -97,10 +81,60 @@ const updateAvatar = (req, res) => {
     });
 };
 
+const createUser = (req, res) => {
+  const {name, about, avatar, email, password} = req.body;
+  bcrypt.hash(password, 10)
+    .then((hash) => {
+      User.create({name, about, avatar, email, password: hash})
+        .then((user) => res.status(201).send(user))
+        .catch((err) => {
+          if (err.name === 'ValidationError') {
+            res.status(ERROR_CODE).send({message: 'Переданы некорректные данные при создании пользователя'});
+            return;
+          }
+          res.status(DEFAULT_ERROR).send({message: 'Ошибка сервера'});
+        });
+    })
+
+};
+
+const loginUser = (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).send({ 'message': 'Email или пароль не переданы' });
+  }
+
+  User.findOne({ email })
+    .then((user) => {
+      if(!user) {
+        return res.status(403).send({ "message": "Такого пользователя не существует" });
+      }
+
+      bcrypt.compare(password, user.password, (err, isValidPassword) => {
+        if (!isValidPassword) {
+          return res.status(401).send({ 'message': 'Email или пароль неверный' });
+        }
+
+        // Создаём JWT-токен со сроком на одну неделю.
+        const token = jwt.sign({ _id: user._id }, 'temporary-secret-key', { expresIn: '7d'});
+        res.cookie('jwt', token, {
+          maxAge: 1000 * 60 * 60 * 24 * 7, /* [миллисекунды * секунды * минуты * часы * дни = 7 дней ] */
+          httpOnly: true,
+        })
+        return res.status(200).send({ 'message': 'Аутентификация выполнена', 'token': token });
+      })
+    })
+    .catch(() => {
+      res.status(401).send({message: 'Ошибка аутентификации'});
+    });
+}
+
 module.exports = {
   getUsers,
   getUser,
   createUser,
   updateUser,
   updateAvatar,
+  loginUser,
 };
