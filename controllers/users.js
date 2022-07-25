@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const User = require('../models/user');
-const { getJwtToken } = require('../middlewares/auth');
+const { getJwtToken } = require('../utils/jwt');
 const {ERROR_CODE, DEFAULT_ERROR, NOT_FOUND} = require('../errors/statusCode');
 
 const getUsers = (req, res) => {
