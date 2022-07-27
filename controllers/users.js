@@ -1,11 +1,6 @@
 const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 const { getJwtToken } = require('../utils/jwt');
-const {
-  ERROR_CODE,
-  DEFAULT_errorOR,
-  NOT_FOUND
-} = require('../errors/statusCode');
 const NotFoundError = require('../errors/not-found-error');
 const BadRequestError = require('../errors/bad-request-error');
 
@@ -35,8 +30,8 @@ const getUser = (request, response, next) => {
     });
 };
 
-const updateUser = (request, response) => {
-  const owner = request.user._id;
+const updateUser = (request, response, next) => {
+  const owner = request.user.id;
   const {
     name,
     about
@@ -55,20 +50,17 @@ const updateUser = (request, response) => {
       });
     })
     .catch((error) => {
-      if (error.name === 'Validationerroror') {
-        response.status(errorOR_CODE)
-          .send({ message: error.message });
+      if (error.name === 'ValidationError') {
+        next(new BadRequestError(error.message));
       } else if (error.name === 'CastError') {
-        response.status(NOT_FOUND)
-          .send({ message: 'Пользователь с указанным ID не найден' });
+        next(new NotFoundError('Пользователь с указанным ID не найден'))
       } else {
-        response.status(DEFAULT_errorOR)
-          .send({ message: 'Ошибка сервера' });
+        next(error);
       }
     });
 };
 
-const updateAvatar = (request, response) => {
+const updateAvatar = (request, response, next) => {
   const owner = request.user._id;
   const { avatar } = request.body;
 
@@ -82,20 +74,17 @@ const updateAvatar = (request, response) => {
       });
     })
     .catch((error) => {
-      if (error.name === 'Validationerroror') {
-        response.status(errorOR_CODE)
-          .send({ message: 'Переданы некорректные данные при обновлении профиля' });
+      if (error.name === 'ValidationError') {
+        next(new BadRequestError('Переданы некорректные данные при обновлении профиля'));
       } else if (error.name === 'CastError') {
-        response.status(NOT_FOUND)
-          .send({ message: 'Пользователь с указанным ID не найден' });
+        next(new NotFoundError('Пользователь с указанным ID не найден'))
       } else {
-        response.status(DEFAULT_errorOR)
-          .send({ message: 'Ошибка сервера' });
+        next(error);
       }
     });
 };
 
-const createUser = (request, response) => {
+const createUser = (request, response, next) => {
   const {
     name,
     about,
@@ -115,19 +104,17 @@ const createUser = (request, response) => {
         .then((user) => response.status(201)
           .send(user))
         .catch((error) => {
-          if (error.name === 'Validationerroror') {
-            response.status(errorOR_CODE)
-              .send({ message: 'Переданы некорректные данные при создании пользователя' });
-            return;
+          if (error.name === 'ValidationError') {
+            next(new BadRequestError('Переданы некорректные данные при обновлении профиля'));
+          } else {
+            next(error);
           }
-          response.status(DEFAULT_errorOR)
-            .send({ message: 'Ошибка сервера' });
         });
     });
 
 };
 
-const getCurrentUser = (request, response) => {
+const getCurrentUser = (request, response, next) => {
   const owner = request.user.id;
 
   User.findById(owner)
@@ -135,20 +122,17 @@ const getCurrentUser = (request, response) => {
       response.send(user);
     })
     .catch((error) => {
-      if (error.name === 'Validationerroror') {
-        response.status(errorOR_CODE)
-          .send({ message: 'Переданы некорректные данные при обновлении профиля' });
+      if (error.name === 'ValidationError') {
+        next(new BadRequestError('Переданы некорректные данные при обновлении профиля'));
       } else if (error.name === 'CastError') {
-        response.status(NOT_FOUND)
-          .send({ message: 'Пользователь с указанным ID не найден' });
+        next(new NotFoundError('Пользователь с указанным ID не найден'))
       } else {
-        response.status(DEFAULT_errorOR)
-          .send({ message: 'Ошибка сервера' });
+        next(error);
       }
     });
 };
 
-const loginUser = (request, response) => {
+const loginUser = (request, response, next) => {
   const {
     email,
     password
