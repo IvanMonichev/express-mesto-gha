@@ -3,6 +3,8 @@ const User = require('../models/user');
 const { getJwtToken } = require('../utils/jwt');
 const NotFoundError = require('../errors/not-found-error');
 const BadRequestError = require('../errors/bad-request-error');
+const ForbiddenError = require('../errors/forbidden-error');
+const UnauthorizedError = require('../errors/unauthorized-error');
 
 
 const getUsers = (request, response, next) => {
@@ -139,21 +141,17 @@ const loginUser = (request, response, next) => {
   } = request.body;
 
   if (!email || !password) {
-    return response.status(400)
-      .send({ 'message': 'Email или пароль не переданы' });
+    next(new BadRequestError('Email или пароль не переданы'));
   }
 
   User.findOne({ email })
     .then((user) => {
       if (!user) {
-        return response.status(403)
-          .send({ 'message': 'Такого пользователя не существует' });
+        throw new ForbiddenError('Такого пользователя не существует');
       }
-
       bcrypt.compare(password, user.password, (error, isValidPassword) => {
         if (!isValidPassword) {
-          return response.status(401)
-            .send({ 'message': 'Email или пароль неверный' });
+          next(new UnauthorizedError('Email или пароль неверный'))
         }
 
         // Создаём JWT-токен со сроком на одну неделю.
@@ -169,10 +167,7 @@ const loginUser = (request, response, next) => {
           });
       });
     })
-    .catch(() => {
-      response.status(401)
-        .send({ message: 'Ошибка аутентификации' });
-    });
+    .catch(next);
 };
 
 module.exports = {
