@@ -5,6 +5,7 @@ const NotFoundError = require('../errors/not-found-error');
 const BadRequestError = require('../errors/bad-request-error');
 const ForbiddenError = require('../errors/forbidden-error');
 const UnauthorizedError = require('../errors/unauthorized-error');
+const ConflictError = require('../errors/conflict-error');
 
 
 const getUsers = (request, response, next) => {
@@ -108,6 +109,8 @@ const createUser = (request, response, next) => {
         .catch((error) => {
           if (error.name === 'ValidationError') {
             next(new BadRequestError('Переданы некорректные данные при обновлении профиля'));
+          } else if (error.code === 11000) {
+            next(new ConflictError('Пользователь с таким E-Mail уже существует'))
           } else {
             next(error);
           }

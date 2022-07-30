@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const validator = require('validator');
+const { isEmail, isStrongPassword } = require('validator')
 
 const userScheme = new mongoose.Schema(
   {
@@ -26,7 +26,7 @@ const userScheme = new mongoose.Schema(
       unique: true,
       validate: {
         validator: (email) => {
-          validator.isEmail(email);
+          isEmail(email);
         },
         message: 'Формат записи поля E-Mail некорректен',
       },
@@ -37,7 +37,7 @@ const userScheme = new mongoose.Schema(
       unique: true,
       validate: {
         validator: (password) => {
-          validator.isStrongPassword(password, {
+           isStrongPassword(password, {
             minLength: 6,
             minLowercase: 1,
             minUppercase: 1,
