@@ -106,9 +106,7 @@ const createUser = (request, response, next) => {
         .then((user) => response.status(201)
           .send(user))
         .catch((error) => {
-          if (error.name === 'ValidationError') {
-            next(new BadRequestError('Переданы некорректные данные при обновлении профиля'));
-          } else if (error.code === 11000) {
+          if (error.code === 11000) {
             next(new ConflictError('Пользователь с таким E-Mail уже существует'));
           } else {
             next(error);
