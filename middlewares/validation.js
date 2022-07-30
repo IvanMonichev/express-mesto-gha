@@ -3,8 +3,8 @@ const { linkRegularExpression, passwordRegularExpression } = require('../utils/r
 
 const registerValid = celebrate({
   body: Joi.object().keys({
-    name: Joi.string().min(2).max(6),
-    about: Joi.string().min(2).max(6),
+    name: Joi.string().min(2).max(30),
+    about: Joi.string().min(2).max(30),
     avatar: Joi.string().regex(linkRegularExpression),
     email: Joi.string().required().email(),
     password: Joi.string().required().min(6).regex(passwordRegularExpression),
@@ -20,8 +20,8 @@ const loginValid = celebrate({
 
 const updateUserValid = celebrate({
   body: Joi.object().keys({
-    name: Joi.string().min(2).max(6),
-    about: Joi.string().min(2).max(6),
+    name: Joi.string().min(2).max(30),
+    about: Joi.string().min(2).max(30),
   }),
 });
 
@@ -33,7 +33,7 @@ const updateAvatarUserValid = celebrate({
 
 const createCardValid = celebrate({
   body: Joi.object().keys({
-    name: Joi.string().min(2).max(6),
+    name: Joi.string().min(2).max(30),
     link: Joi.string().regex(linkRegularExpression),
   }),
 });
