@@ -11,7 +11,7 @@ const {
   updateUserValid,
   updateAvatarUserValid,
 
-} = require('../middlewares/validation')
+} = require('../middlewares/validation');
 
 router.get('/', getUsers);
 router.get('/me', getCurrentUser);

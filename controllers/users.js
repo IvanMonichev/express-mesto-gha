@@ -7,7 +7,6 @@ const ForbiddenError = require('../errors/forbidden-error');
 const UnauthorizedError = require('../errors/unauthorized-error');
 const ConflictError = require('../errors/conflict-error');
 
-
 const getUsers = (request, response, next) => {
   User.find({})
     .then((users) => response.send(users))
@@ -37,12 +36,12 @@ const updateUser = (request, response, next) => {
   const owner = request.user.id;
   const {
     name,
-    about
+    about,
   } = request.body;
 
   User.findByIdAndUpdate(owner, {
     name,
-    about
+    about,
   }, { runValidators: true })
     .then((user) => {
       response.send({
@@ -56,7 +55,7 @@ const updateUser = (request, response, next) => {
       if (error.name === 'ValidationError') {
         next(new BadRequestError(error.message));
       } else if (error.name === 'CastError') {
-        next(new NotFoundError('Пользователь с указанным ID не найден'))
+        next(new NotFoundError('Пользователь с указанным ID не найден'));
       } else {
         next(error);
       }
@@ -80,7 +79,7 @@ const updateAvatar = (request, response, next) => {
       if (error.name === 'ValidationError') {
         next(new BadRequestError('Переданы некорректные данные при обновлении профиля'));
       } else if (error.name === 'CastError') {
-        next(new NotFoundError('Пользователь с указанным ID не найден'))
+        next(new NotFoundError('Пользователь с указанным ID не найден'));
       } else {
         next(error);
       }
@@ -93,7 +92,7 @@ const createUser = (request, response, next) => {
     about,
     avatar,
     email,
-    password
+    password,
   } = request.body;
   bcrypt.hash(password, 10)
     .then((hash) => {
@@ -102,7 +101,7 @@ const createUser = (request, response, next) => {
         about,
         avatar,
         email,
-        password: hash
+        password: hash,
       })
         .then((user) => response.status(201)
           .send(user))
@@ -110,13 +109,12 @@ const createUser = (request, response, next) => {
           if (error.name === 'ValidationError') {
             next(new BadRequestError('Переданы некорректные данные при обновлении профиля'));
           } else if (error.code === 11000) {
-            next(new ConflictError('Пользователь с таким E-Mail уже существует'))
+            next(new ConflictError('Пользователь с таким E-Mail уже существует'));
           } else {
             next(error);
           }
         });
     });
-
 };
 
 const getCurrentUser = (request, response, next) => {
@@ -130,7 +128,7 @@ const getCurrentUser = (request, response, next) => {
       if (error.name === 'ValidationError') {
         next(new BadRequestError('Переданы некорректные данные при обновлении профиля'));
       } else if (error.name === 'CastError') {
-        next(new NotFoundError('Пользователь с указанным ID не найден'))
+        next(new NotFoundError('Пользователь с указанным ID не найден'));
       } else {
         next(error);
       }
@@ -140,7 +138,7 @@ const getCurrentUser = (request, response, next) => {
 const loginUser = (request, response, next) => {
   const {
     email,
-    password
+    password,
   } = request.body;
 
   if (!email || !password) {
@@ -154,19 +152,19 @@ const loginUser = (request, response, next) => {
       }
       bcrypt.compare(password, user.password, (error, isValidPassword) => {
         if (!isValidPassword) {
-          next(new UnauthorizedError('Email или пароль неверный'))
+          next(new UnauthorizedError('Email или пароль неверный'));
         }
 
         // Создаём JWT-токен со сроком на одну неделю.
         const token = getJwtToken(user._id);
         response.cookie('jwt', token, {
-          maxAge: 1000 * 60 * 60 * 24 * 7, /* [миллисекунды * секунды * минуты * часы * дни = 7 дней ] */
+          maxAge: 1000 * 60 * 60 * 24 * 7,
           httpOnly: true,
         });
         return response.status(200)
           .send({
-            'message': 'Аутентификация выполнена',
-            'token': token
+            message: 'Аутентификация выполнена',
+            token,
           });
       });
     })
@@ -180,5 +178,5 @@ module.exports = {
   updateUser,
   updateAvatar,
   loginUser,
-  getCurrentUser
+  getCurrentUser,
 };

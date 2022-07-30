@@ -9,8 +9,8 @@ const {
 } = require('../controllers/cards');
 
 const {
-  createCardValid
-} = require('../middlewares/validation')
+  createCardValid,
+} = require('../middlewares/validation');
 
 router.post('/', createCardValid, createCard);
 router.delete('/:cardId', deleteCard);

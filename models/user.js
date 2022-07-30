@@ -1,5 +1,8 @@
 const mongoose = require('mongoose');
-const { isEmail, isStrongPassword } = require('validator')
+const {
+  isEmail,
+  isStrongPassword,
+} = require('validator');
 
 const userScheme = new mongoose.Schema(
   {
@@ -13,7 +16,7 @@ const userScheme = new mongoose.Schema(
       type: String,
       minlength: [2, 'содержит меньше 2-ух символов'],
       maxlength: [30, 'содержит больше 30 символов'],
-      default: 'Исследователь океана'
+      default: 'Исследователь океана',
     },
     avatar: {
       type: String,
@@ -37,18 +40,15 @@ const userScheme = new mongoose.Schema(
       unique: true,
       validate: {
         validator: (password) => {
-           isStrongPassword(password, {
+          isStrongPassword(password, {
             minLength: 6,
             minLowercase: 1,
             minUppercase: 1,
             minNumbers: 1,
-            minSymbols: 0
-          })
+            minSymbols: 0,
+          });
         },
-        message: "Формат записи поля Password некорректен. " +
-          "Пароль должен состоять минимум из 6 символов, " +
-          "1 символа нижнего регистра, " +
-          "1 символа верхнего регистра и содержать минимум 1 число",
+        message: 'Формат записи поля Password некорректен.',
       },
     },
   },

@@ -12,13 +12,13 @@ const getCards = (request, response, next) => {
 const createCard = (request, response, next) => {
   const {
     name,
-    link
+    link,
   } = request.body;
   const owner = request.user.id;
   Card.create({
     name,
     link,
-    owner
+    owner,
   })
     .then((card) => response.status(201)
       .send(card))
@@ -36,24 +36,21 @@ const deleteCard = (request, response, next) => {
 
   Card.findById(cardId)
     .then((card) => {
-        if (!card) {
-          throw new NotFoundError('Переданы некорректные данные для удаления карточки');
-        } else {
-          if (owner.toString() !== card.owner.toString()) {
-            throw new ForbiddenError(`Пользователь с ID ${owner} не является владельцем данной карточки`);
-          } else {
-            Card.findByIdAndRemove(cardId)
-              .then((card) => {
-                response.send({ message: `Карточка с ID ${card.id} удалена` });
-              })
-              .catch(next);
-          }
-        }
+      if (!card) {
+        throw new NotFoundError('Переданы некорректные данные для удаления карточки');
+      } else if (owner.toString() !== card.owner.toString()) {
+        throw new ForbiddenError(`Пользователь с ID ${owner} не является владельцем данной карточки`);
+      } else {
+        Card.findByIdAndRemove(cardId)
+          .then(() => {
+            response.send({ message: `Карточка с ID ${card.id} удалена` });
+          })
+          .catch(next);
       }
-    )
+    })
     .catch((error) => {
       if (error.name === 'CastError') {
-        next(new BadRequestError('Карточка с указанным ID не найдена'))
+        next(new BadRequestError('Карточка с указанным ID не найдена'));
       }
       next(error);
     });
@@ -68,15 +65,12 @@ const likeCard = (request, response, next) => {
     { $addToSet: { likes: owner } },
     {
       new: true,
-      runValidators: true
+      runValidators: true,
     },
   )
     .then((card) => {
       if (!card) {
-        response.status(NOT_FOUND)
-          .send({
-            message: 'Переданы некорректные данные для постановки лайк',
-          });
+        throw new NotFoundError('Переданы некорректные данные для постановки лайк');
       } else {
         response.send(card);
       }
@@ -85,7 +79,7 @@ const likeCard = (request, response, next) => {
       if (error.name === 'CastError') {
         next(new BadRequestError('Передан несуществующий ID карточки'));
       } else if (error.name === 'ValidationError') {
-        next(new BadRequestError(error.message))
+        next(new BadRequestError(error.message));
       } else {
         next(error);
       }
@@ -100,7 +94,7 @@ const dislikeCard = (request, response, next) => {
     { $pull: { likes: owner } },
     {
       new: true,
-      runValidators: true
+      runValidators: true,
     },
   )
     .then((card) => {
@@ -114,7 +108,7 @@ const dislikeCard = (request, response, next) => {
       if (error.name === 'CastError') {
         next(new BadRequestError('Передан несуществующий ID карточки'));
       } else if (error.name === 'ValidationError') {
-        next(new BadRequestError(error.message))
+        next(new BadRequestError(error.message));
       } else {
         next(error);
       }
