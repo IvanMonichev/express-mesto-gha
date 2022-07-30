@@ -1,17 +1,17 @@
 const router = require('express').Router();
 
 const {
+  createCardValid,
+  cardIdValid,
+} = require('../middlewares/validation');
+
+const {
   createCard,
   deleteCard,
   getCards,
   likeCard,
   dislikeCard,
 } = require('../controllers/cards');
-
-const {
-  createCardValid,
-  cardIdValid,
-} = require('../middlewares/validation');
 
 router.post('/', createCardValid, createCard);
 router.delete('/:cardId', deleteCard);
