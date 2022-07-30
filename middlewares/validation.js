@@ -38,10 +38,24 @@ const createCardValid = celebrate({
   }),
 });
 
+const userIdValid = celebrate({
+  params: Joi.object().keys({
+    userID: Joi.string().length(24).hex(),
+  }),
+});
+
+const cardIdValid = celebrate({
+  params: Joi.object().keys({
+    cardID: Joi.string().length(24).hex(),
+  }),
+});
+
 module.exports = {
   registerValid,
   loginValid,
   updateUserValid,
   updateAvatarUserValid,
   createCardValid,
+  userIdValid,
+  cardIdValid,
 };
