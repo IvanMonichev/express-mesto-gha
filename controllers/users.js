@@ -143,7 +143,7 @@ const loginUser = (request, response, next) => {
     next(new BadRequestError('Email или пароль не переданы'));
   }
 
-  User.findOne({ email })
+  User.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
         throw new ForbiddenError('Такого пользователя не существует');

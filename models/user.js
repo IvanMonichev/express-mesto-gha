@@ -37,19 +37,7 @@ const userScheme = new mongoose.Schema(
     password: {
       type: String,
       required: true,
-      unique: true,
-      validate: {
-        validator: (password) => {
-          isStrongPassword(password, {
-            minLength: 6,
-            minLowercase: 1,
-            minUppercase: 1,
-            minNumbers: 1,
-            minSymbols: 0,
-          });
-        },
-        message: 'Формат записи поля Password некорректен.',
-      },
+      select: false,
     },
   },
   {

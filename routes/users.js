@@ -6,7 +6,6 @@ const {
   userIdValid,
 } = require('../middlewares/validation');
 
-
 const {
   getUsers,
   getUser,

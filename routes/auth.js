@@ -5,7 +5,6 @@ const {
 } = require('../middlewares/validation');
 const { createUser, loginUser } = require('../controllers/users');
 
-
 router.post('/signup', registerValid, createUser);
 router.post('/signin', loginValid, loginUser);
 
