@@ -22,12 +22,7 @@ const createCard = (request, response, next) => {
   })
     .then((card) => response.status(201)
       .send(card))
-    .catch((error) => {
-      if (error.name === 'ValidationError') {
-        next(new BadRequestError(error.message));
-      }
-      next(error);
-    });
+    .catch(next);
 };
 
 const deleteCard = (request, response, next) => {

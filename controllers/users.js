@@ -45,9 +45,7 @@ const updateUser = (request, response, next) => {
       });
     })
     .catch((error) => {
-      if (error.name === 'ValidationError') {
-        next(new BadRequestError(error.message));
-      } else if (error.name === 'CastError') {
+      if (error.name === 'CastError') {
         next(new NotFoundError('Пользователь с указанным ID не найден'));
       } else {
         next(error);
