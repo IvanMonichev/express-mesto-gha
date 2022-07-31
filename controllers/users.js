@@ -104,7 +104,12 @@ const createUser = (request, response, next) => {
         password: hash,
       })
         .then((user) => response.status(201)
-          .send(user))
+          .send({
+            name: user.name,
+            about: user.about,
+            email: user.email,
+            avatar: user.avatar,
+          }))
         .catch((error) => {
           if (error.code === 11000) {
             next(new ConflictError('Пользователь с таким E-Mail уже существует'));
@@ -143,8 +148,7 @@ const loginUser = (request, response, next) => {
     next(new BadRequestError('Email или пароль не переданы'));
   }
 
-  User.findOne({ email })
-    .select('+password')
+  User.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
         throw new ForbiddenError('Такого пользователя не существует');
