@@ -40,13 +40,13 @@ const createCardValid = celebrate({
 
 const userIdValid = celebrate({
   params: Joi.object().keys({
-    userID: Joi.string().length(24).hex(),
+    userId: Joi.string().length(24).hex(),
   }),
 });
 
 const cardIdValid = celebrate({
   params: Joi.object().keys({
-    cardID: Joi.string().length(24).hex(),
+    cardId: Joi.string().length(24).hex(),
   }),
 });
 
