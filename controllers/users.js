@@ -3,7 +3,6 @@ const User = require('../models/user');
 const { getJwtToken } = require('../utils/jwt');
 const NotFoundError = require('../errors/not-found-error');
 const BadRequestError = require('../errors/bad-request-error');
-const ForbiddenError = require('../errors/forbidden-error');
 const UnauthorizedError = require('../errors/unauthorized-error');
 const ConflictError = require('../errors/conflict-error');
 
@@ -19,17 +18,11 @@ const getUser = (request, response, next) => {
   User.findById(userId)
     .then((user) => {
       if (!user) {
-        next(new NotFoundError('Такого пользователя не существует'));
+        throw new NotFoundError('Такого пользователя не существует');
       }
       response.send(user);
     })
-    .catch((error) => {
-      if (error.name === 'CastError') {
-        next(new BadRequestError('Пользователь по указанному ID не найден'));
-      } else {
-        next(error);
-      }
-    });
+    .catch(next);
 };
 
 const updateUser = (request, response, next) => {
