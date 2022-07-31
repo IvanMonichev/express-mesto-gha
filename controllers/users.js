@@ -147,9 +147,8 @@ const loginUser = (request, response, next) => {
       }
       bcrypt.compare(password, user.password, (error, isValidPassword) => {
         if (!isValidPassword) {
-          next(new UnauthorizedError('Email или пароль неверный'));
+          throw UnauthorizedError('Email или пароль неверный');
         }
-
         // Создаём JWT-токен со сроком на одну неделю.
         const token = getJwtToken(user._id);
         response.cookie('jwt', token, {
