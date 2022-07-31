@@ -103,12 +103,12 @@ const createUser = (request, response, next) => {
         email,
         password: hash,
       })
-        .then(() => response.status(201)
+        .then(() => response.status(200)
           .send({
             name,
             about,
             avatar,
-            email
+            email,
           }))
         .catch((error) => {
           if (error.code === 11000) {
