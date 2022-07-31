@@ -152,7 +152,7 @@ const loginUser = (request, response, next) => {
   User.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        throw new ForbiddenError('Такого пользователя не существует');
+        throw new UnauthorizedError('Такого пользователя не существует');
       }
       bcrypt.compare(password, user.password, (error, isValidPassword) => {
         if (!isValidPassword) {
