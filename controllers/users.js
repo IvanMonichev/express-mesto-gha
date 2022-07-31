@@ -103,7 +103,7 @@ const createUser = (request, response, next) => {
         email,
         password: hash,
       })
-        .then(() => response.status(200)
+        .then(() => response.status(201)
           .send({
             name,
             about,
@@ -117,7 +117,8 @@ const createUser = (request, response, next) => {
             next(error);
           }
         });
-    });
+    })
+    .catch(next);
 };
 
 const getCurrentUser = (request, response, next) => {
