@@ -69,9 +69,7 @@ const updateAvatar = (request, response, next) => {
       });
     })
     .catch((error) => {
-      if (error.name === 'ValidationError') {
-        next(new BadRequestError('Переданы некорректные данные при обновлении профиля'));
-      } else if (error.name === 'CastError') {
+      if (error.name === 'CastError') {
         next(new NotFoundError('Пользователь с указанным ID не найден'));
       } else {
         next(error);
