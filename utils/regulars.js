@@ -1,4 +1,4 @@
-const linkRegularExpression = /^((http(s)?):\/\/(www.)?)?(\/)?[a-z-\d]{1,256}.[a-z]{2,6}\b(\/[a-z]*)*$/;
+const linkRegularExpression = /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/;
 
 module.exports = {
   linkRegularExpression,
