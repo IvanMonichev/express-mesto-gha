@@ -1,13 +1,4 @@
 const { celebrate, Joi } = require('celebrate');
-const { linkRegularExpression } = require('../utils/regulars');
-
-const urlCustomValidation = (value, helper) => {
-  if (linkRegularExpression.test(value)) {
-    return value;
-  }
-
-  return helper.error('Ошибка валидности');
-};
 
 const registerValid = celebrate({
   body: Joi.object().keys({
@@ -15,7 +6,7 @@ const registerValid = celebrate({
     password: Joi.string().required().min(6),
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string().custom(urlCustomValidation),
+    avatar: Joi.string(),
   }),
 });
 
@@ -35,14 +26,14 @@ const updateUserValid = celebrate({
 
 const updateAvatarUserValid = celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().custom(urlCustomValidation),
+    avatar: Joi.string().required(),
   }),
 });
 
 const createCardValid = celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
-    link: Joi.string().required().custom(urlCustomValidation),
+    link: Joi.string().required(),
   }),
 });
 
