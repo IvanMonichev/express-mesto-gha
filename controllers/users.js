@@ -103,9 +103,13 @@ const createUser = (request, response, next) => {
         email,
         password: hash,
       })
-        .then((user) => User.findById(user._id))
-        .then((user) => response.status(201)
-          .send(user))
+        .then(() => response.status(201)
+          .send({
+            name,
+            about,
+            avatar,
+            email
+          }))
         .catch((error) => {
           if (error.code === 11000) {
             next(new ConflictError('Пользователь с таким E-Mail уже существует'));
