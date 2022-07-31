@@ -1,7 +1,5 @@
-const linkRegularExpression = /[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/;
-const passwordRegularExpression = /^[a-zA-Z0-9]{6,30}$/;
+const linkRegularExpression = /(http(s)?):\/\/(www.)?[a-z-\d]{1,256}.[a-z]{2,6}\b(\/[a-z]*)*/gm;
 
 module.exports = {
   linkRegularExpression,
-  passwordRegularExpression,
 };

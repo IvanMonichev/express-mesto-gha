@@ -1,20 +1,28 @@
 const { celebrate, Joi } = require('celebrate');
-const { linkRegularExpression, passwordRegularExpression } = require('../utils/regulars');
+const { linkRegularExpression } = require('../utils/regulars');
+
+const urlCustomValidation = (value, helper) => {
+  if (linkRegularExpression.test(value)) {
+    return value;
+  }
+
+  return helper.error('Ошибка валидности');
+};
 
 const registerValid = celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
-    password: Joi.string().required().min(6).regex(passwordRegularExpression),
+    password: Joi.string().required().min(6),
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string().regex(linkRegularExpression),
+    avatar: Joi.string().custom(urlCustomValidation),
   }),
 });
 
 const loginValid = celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
-    password: Joi.string().required().min(6).regex(passwordRegularExpression),
+    password: Joi.string().required().min(6),
   }),
 });
 
@@ -27,14 +35,14 @@ const updateUserValid = celebrate({
 
 const updateAvatarUserValid = celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().regex(linkRegularExpression),
+    avatar: Joi.string().custom(urlCustomValidation),
   }),
 });
 
 const createCardValid = celebrate({
   body: Joi.object().keys({
-    name: Joi.string().min(2).max(30),
-    link: Joi.string().regex(linkRegularExpression),
+    name: Joi.string().required().min(2).max(30),
+    link: Joi.string().required().custom(urlCustomValidation),
   }),
 });
 
