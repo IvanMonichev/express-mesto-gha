@@ -44,35 +44,7 @@ const updateUser = (request, response, next) => {
         avatar: user.avatar,
       });
     })
-    .catch((error) => {
-      if (error.name === 'CastError') {
-        next(new NotFoundError('Пользователь с указанным ID не найден'));
-      } else {
-        next(error);
-      }
-    });
-};
-
-const updateAvatar = (request, response, next) => {
-  const owner = request.user.id;
-  const { avatar } = request.body;
-
-  User.findByIdAndUpdate(owner, { avatar }, { runValidators: true })
-    .then((user) => {
-      response.send({
-        _id: owner,
-        user: user.name,
-        about: user.about,
-        avatar,
-      });
-    })
-    .catch((error) => {
-      if (error.name === 'CastError') {
-        next(new NotFoundError('Пользователь с указанным ID не найден'));
-      } else {
-        next(error);
-      }
-    });
+    .catch(next);
 };
 
 const createUser = (request, response, next) => {
@@ -110,6 +82,22 @@ const createUser = (request, response, next) => {
     .catch(next);
 };
 
+const updateAvatar = (request, response, next) => {
+  const owner = request.user.id;
+  const { avatar } = request.body;
+
+  User.findByIdAndUpdate(owner, { avatar }, { runValidators: true })
+    .then((user) => {
+      response.send({
+        _id: owner,
+        user: user.name,
+        about: user.about,
+        avatar,
+      });
+    })
+    .catch(next);
+};
+
 const getCurrentUser = (request, response, next) => {
   const owner = request.user.id;
 
@@ -117,15 +105,7 @@ const getCurrentUser = (request, response, next) => {
     .then((user) => {
       response.send(user);
     })
-    .catch((error) => {
-      if (error.name === 'ValidationError') {
-        next(new BadRequestError('Переданы некорректные данные при обновлении профиля'));
-      } else if (error.name === 'CastError') {
-        next(new NotFoundError('Пользователь с указанным ID не найден'));
-      } else {
-        next(error);
-      }
-    });
+    .catch(next);
 };
 
 const loginUser = (request, response, next) => {
@@ -134,31 +114,28 @@ const loginUser = (request, response, next) => {
     password,
   } = request.body;
 
-  if (!email || !password) {
-    next(new BadRequestError('Email или пароль не переданы'));
-  }
-
   User.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
         throw new UnauthorizedError('Такого пользователя не существует');
       }
-      bcrypt.compare(password, user.password, (error, isValidPassword) => {
-        if (!isValidPassword) {
-          throw UnauthorizedError('Email или пароль неверный');
-        }
-        // Создаём JWT-токен со сроком на одну неделю.
-        const token = getJwtToken(user._id);
-        response.cookie('jwt', token, {
-          maxAge: 1000 * 60 * 60 * 24 * 7,
-          httpOnly: true,
-        });
-        return response.status(200)
-          .send({
-            message: 'Аутентификация выполнена',
+
+      return bcrypt.compare(password, user.password)
+        .then((isValidPassword) => {
+          if (!isValidPassword) {
+            throw new UnauthorizedError('Неверный E-Mail или пароль')
+          }
+          const token = getJwtToken(user._id);
+          response.cookie('jwt', token, {
+            maxAge: 1000 * 60 * 60 * 24 * 7,
+            httpOnly: true,
+          });
+
+          return response.send({
+            message: 'Аутентификация успешно выполнена',
             token,
           });
-      });
+        })
     })
     .catch(next);
 };
