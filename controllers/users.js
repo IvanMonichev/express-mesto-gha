@@ -2,7 +2,6 @@ const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 const { getJwtToken } = require('../utils/jwt');
 const NotFoundError = require('../errors/not-found-error');
-const BadRequestError = require('../errors/bad-request-error');
 const UnauthorizedError = require('../errors/unauthorized-error');
 const ConflictError = require('../errors/conflict-error');
 
@@ -123,7 +122,7 @@ const loginUser = (request, response, next) => {
       return bcrypt.compare(password, user.password)
         .then((isValidPassword) => {
           if (!isValidPassword) {
-            throw new UnauthorizedError('Неверный E-Mail или пароль')
+            throw new UnauthorizedError('Неверный E-Mail или пароль');
           }
           const token = getJwtToken(user._id);
           response.cookie('jwt', token, {
@@ -135,7 +134,7 @@ const loginUser = (request, response, next) => {
             message: 'Аутентификация успешно выполнена',
             token,
           });
-        })
+        });
     })
     .catch(next);
 };
