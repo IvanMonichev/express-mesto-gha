@@ -22,7 +22,13 @@ const createCard = (request, response, next) => {
   })
     .then((card) => response.status(201)
       .send(card))
-    .catch(next);
+    .catch((error) => {
+      if (error.name === 'ValidationError') {
+        next(new BadRequestError('Некорректные данные при создании карточки'));
+      } else {
+        next(error);
+      }
+    });
 };
 
 const deleteCard = (request, response, next) => {

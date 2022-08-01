@@ -4,6 +4,7 @@ const { getJwtToken } = require('../utils/jwt');
 const NotFoundError = require('../errors/not-found-error');
 const UnauthorizedError = require('../errors/unauthorized-error');
 const ConflictError = require('../errors/conflict-error');
+const BadRequestError = require('../errors/bad-request-error');
 
 const getUsers = (request, response, next) => {
   User.find({})
@@ -17,7 +18,7 @@ const getUser = (request, response, next) => {
   User.findById(userId)
     .then((user) => {
       if (!user) {
-        throw new NotFoundError('Такого пользователя не существует');
+        throw new NotFoundError('Пользователь по заданному ID отсутствует в базе');
       }
       response.send(user);
     })
@@ -36,6 +37,9 @@ const updateUser = (request, response, next) => {
     about,
   }, { runValidators: true })
     .then((user) => {
+      if (!user) {
+        throw new NotFoundError('Пользователь по заданному ID отсутствует в базе');
+      }
       response.send({
         _id: owner,
         name,
@@ -43,7 +47,13 @@ const updateUser = (request, response, next) => {
         avatar: user.avatar,
       });
     })
-    .catch(next);
+    .catch((error) => {
+      if (error.name === 'ValidationError') {
+        next(new BadRequestError('Некорректные данные при обновление данных профиля'));
+      } else {
+        next(error);
+      }
+    });
 };
 
 const createUser = (request, response, next) => {
@@ -73,6 +83,8 @@ const createUser = (request, response, next) => {
         .catch((error) => {
           if (error.code === 11000) {
             next(new ConflictError('Пользователь с таким E-Mail уже существует'));
+          } else if (error.name === 'ValidationError') {
+            next(new BadRequestError('Некорректные данные при создании пользователя'));
           } else {
             next(error);
           }
@@ -87,6 +99,9 @@ const updateAvatar = (request, response, next) => {
 
   User.findByIdAndUpdate(owner, { avatar }, { runValidators: true })
     .then((user) => {
+      if (!user) {
+        throw new NotFoundError('Пользователь по заданному ID отсутствует в базе');
+      }
       response.send({
         _id: owner,
         user: user.name,
@@ -94,7 +109,13 @@ const updateAvatar = (request, response, next) => {
         avatar,
       });
     })
-    .catch(next);
+    .catch((error) => {
+      if (error.name === 'ValidationError') {
+        next(new BadRequestError('Некорректные данные при обновление аватара профиля'));
+      } else {
+        next(error);
+      }
+    });
 };
 
 const getCurrentUser = (request, response, next) => {
