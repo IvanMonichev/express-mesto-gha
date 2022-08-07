@@ -24,6 +24,6 @@ app.use(router);
 app.use(errors());
 app.use(serverError);
 
-app.listen(PORT, '127.0.0.1', () => {
+app.listen(PORT, () => {
   console.log(`Сервер успешно запущен! Порт – ${PORT}.`);
 });
